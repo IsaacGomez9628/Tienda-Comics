@@ -16,10 +16,10 @@ class Usuario extends Authenticatable
     
     protected $fillable = [
         'id_persona',
+        'id_user',
         'nombre_usuario',
         'contrasena',
         'id_rol',
-        'ultima_sesion',
         'id_estatus'
     ];
     
@@ -42,18 +42,6 @@ class Usuario extends Authenticatable
     public function getEmailForPasswordReset()
     {
         return $this->persona->email;
-    }
-    
-    // Método para verificar el rol
-    public function esAdmin()
-    {
-        return $this->rol->nombre === 'Administrador';
-    }
-    
-    // Método para verificar si es empleado
-    public function esEmpleado()
-    {
-        return $this->rol->nombre === 'Empleado';
     }
     
     // Relación con Persona
@@ -84,5 +72,21 @@ class Usuario extends Authenticatable
     public function movimientos()
     {
         return $this->hasMany(Movimiento::class, 'id_usuario');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function esAdmin()
+    {
+        // Si no tiene usuario relacionado, no es admin
+        if (!$this->usuario) {
+            return false;
+        }
+        
+        // Verifica si el rol del usuario es "Administrador"
+        return $this->usuario->rol->nombre === 'Administrador';
     }
 }

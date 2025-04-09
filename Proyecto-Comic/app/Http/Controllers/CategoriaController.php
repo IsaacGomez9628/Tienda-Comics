@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use App\Models\Categoria;
+use App\Models\Movimiento;
+use App\Models\Usuario;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -51,8 +55,8 @@ class CategoriaController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Usuario::where('id_user', Auth::id())->first()->id_usuario,
                 'crear',
                 'categorias',
                 $categoria->id_categoria,
@@ -141,8 +145,8 @@ class CategoriaController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'actualizar',
                 'categorias',
                 $categoria->id_categoria,
@@ -189,8 +193,8 @@ class CategoriaController extends Controller
             $categoria->update(['id_estatus' => 2]); // 2 = Inactivo
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                    Auth::user()->usuario->id_usuario,
                 'desactivar',
                 'categorias',
                 $categoria->id_categoria,

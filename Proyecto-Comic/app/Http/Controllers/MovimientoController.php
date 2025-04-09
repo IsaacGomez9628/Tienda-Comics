@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Movimiento;
 use App\Models\Tipo_movimiento;
+use Illuminate\Routing\Controller;
 
 class MovimientoController extends Controller
 {

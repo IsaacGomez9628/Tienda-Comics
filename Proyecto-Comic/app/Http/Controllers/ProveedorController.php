@@ -9,9 +9,12 @@ use App\Models\Direccion;
 use App\Models\Codigo_postal;
 use App\Models\Ciudad;
 use App\Models\Estado;
+use App\Models\Movimiento;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ProveedorController extends Controller
 {
@@ -117,8 +120,8 @@ class ProveedorController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'crear',
                 'proveedores',
                 $proveedor->id_proveedor,
@@ -279,8 +282,8 @@ class ProveedorController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'actualizar',
                 'proveedores',
                 $proveedor->id_proveedor,
@@ -318,8 +321,8 @@ class ProveedorController extends Controller
             $proveedor->update(['id_estatus' => 2]); // 2 = Inactivo
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'desactivar',
                 'proveedores',
                 $proveedor->id_proveedor,

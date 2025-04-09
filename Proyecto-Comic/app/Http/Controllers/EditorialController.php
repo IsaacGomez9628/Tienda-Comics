@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Editorial;
+use App\Models\Movimiento;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+
+use Illuminate\Routing\Controller;
 
 class EditorialController extends Controller
 {
@@ -50,8 +54,8 @@ class EditorialController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'crear',
                 'editoriales',
                 $editorial->id_editorial,
@@ -109,8 +113,8 @@ class EditorialController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'actualizar',
                 'editoriales',
                 $editorial->id_editorial,
@@ -148,8 +152,8 @@ class EditorialController extends Controller
             $editorial->update(['id_estatus' => 2]); // 2 = Inactivo
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'desactivar',
                 'editoriales',
                 $editorial->id_editorial,

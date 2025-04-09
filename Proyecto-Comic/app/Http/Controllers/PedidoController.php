@@ -13,6 +13,9 @@ use App\Models\Comunicacion_proveedor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PedidoProveedor;
+use App\Models\Movimiento;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PedidoController extends Controller
 {
@@ -61,7 +64,7 @@ class PedidoController extends Controller
             $pedido = Pedido::create([
                 'folio' => Pedido::generarFolio(),
                 'id_proveedor' => $request->id_proveedor,
-                'id_usuario' => auth()->id(),
+                'id_usuario' => Auth::id(),
                 'fecha_entrega_estimada' => $request->fecha_entrega_estimada,
                 'fecha_entrega_real' => null,
                 'subtotal' => 0, // Se calculará después
@@ -90,8 +93,8 @@ class PedidoController extends Controller
             $pedido->calcularTotales();
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'crear',
                 'pedidos',
                 $pedido->id_pedido,
@@ -172,8 +175,8 @@ class PedidoController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'actualizar',
                 'pedidos',
                 $pedido->id_pedido,
@@ -227,8 +230,8 @@ class PedidoController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'comunicar',
                 'pedidos',
                 $pedido->id_pedido,
@@ -276,8 +279,8 @@ class PedidoController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'actualizar',
                 'comunicacion_proveedores',
                 $comunicacion->id_comunicacion,

@@ -7,8 +7,12 @@ use App\Models\Cliente;
 use App\Models\Persona;
 use App\Models\Membresia;
 use App\Models\Cliente_membresia;
+use App\Models\Movimiento;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+
+use Illuminate\Routing\Controller;
 
 class ClienteController extends Controller
 {
@@ -82,7 +86,7 @@ class ClienteController extends Controller
             
             // Registrar movimiento
             \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+                Auth::user()->id_usuario ?? Auth::id(),
                 'crear',
                 'clientes',
                 $cliente->id_cliente,
@@ -163,8 +167,8 @@ class ClienteController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'actualizar',
                 'clientes',
                 $cliente->id_cliente,
@@ -196,8 +200,8 @@ class ClienteController extends Controller
             $persona = Persona::findOrFail($cliente->id_persona);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'desactivar',
                 'clientes',
                 $cliente->id_cliente,

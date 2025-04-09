@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Pedido extends Model
 {
@@ -115,8 +116,7 @@ class Pedido extends Model
         $this->id_estado_pedido = $idEstado;
         $this->save();
         
-        // Obtener el ID del usuario actual de forma segura
-        $usuarioId = auth()->id();
+        $usuarioId = Auth::id();
         
         // Registrar movimiento
         Movimiento::registrar(

@@ -13,9 +13,11 @@ use App\Models\Idioma;
 use App\Models\Proveedor;
 use App\Models\Producto_proveedor;
 use App\Models\Imagen;
+use App\Models\Movimiento;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controller;
 
 class ProductoController extends Controller
 {
@@ -198,8 +200,8 @@ class ProductoController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'crear',
                 'productos',
                 $producto->id_producto,
@@ -401,8 +403,8 @@ class ProductoController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'actualizar',
                 'productos',
                 $producto->id_producto,
@@ -432,8 +434,8 @@ class ProductoController extends Controller
             $producto->update(['id_estatus' => 2]); // 2 = Inactivo
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'desactivar',
                 'productos',
                 $producto->id_producto,

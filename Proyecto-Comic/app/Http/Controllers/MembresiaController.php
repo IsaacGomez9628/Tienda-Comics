@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Membresia;
+use App\Models\Movimiento;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Routing\Controller;
 
 class MembresiaController extends Controller
 {
@@ -51,8 +54,8 @@ class MembresiaController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'crear',
                 'membresias',
                 $membresia->id_membresia,
@@ -115,8 +118,8 @@ class MembresiaController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'actualizar',
                 'membresias',
                 $membresia->id_membresia,
@@ -154,8 +157,8 @@ class MembresiaController extends Controller
             $membresia->update(['id_estatus' => 2]); // 2 = Inactivo
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->id(),
+            Movimiento::registrar(
+                Auth::id(),
                 'desactivar',
                 'membresias',
                 $membresia->id_membresia,

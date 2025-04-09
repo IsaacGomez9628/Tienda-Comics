@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Movimiento;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Usuario;
@@ -9,6 +10,8 @@ use App\Models\Persona;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class UsuarioController extends Controller
 {
@@ -76,8 +79,8 @@ class UsuarioController extends Controller
             ]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'crear',
                 'usuarios',
                 $usuario->id_usuario,
@@ -99,9 +102,29 @@ class UsuarioController extends Controller
     public function show($id)
     {
         $usuario = Usuario::with(['persona', 'rol'])->findOrFail($id);
+
+        dd([
+            'class_name' => get_class(Auth::user()),
+            'has_usuario' => Auth::user()->usuario ? true : false,
+            'has_esAdmin_method' => method_exists(Auth::user(), 'esAdmin'),
+            'usuario_info' => Auth::user()->usuario ? [
+                'id' => Auth::user()->usuario->id_usuario,
+                'has_rol' => Auth::user()->usuario->rol ? true : false
+            ] : null
+        ]);
+        
+        $isAdmin = false;
+        $currentUser = Auth::user();
+        
+        if ($currentUser && method_exists($currentUser, 'usuario') && $currentUser->usuario) {
+            $isAdmin = $currentUser->usuario && 
+                      $currentUser->usuario->rol && 
+                      $currentUser->usuario->rol->nombre === 'Administrador';
+        }
         
         // Verificar si es el usuario actual o es administrador
-        if (auth()->user()->usuario->id_usuario != $id && !auth()->user()->esAdmin()) {
+        if ($currentUser && $currentUser->usuario && 
+            $currentUser->usuario->id_usuario != $id && !$isAdmin) {
             return redirect()->route('dashboard')
                             ->with('error', 'No tienes permisos para ver este usuario');
         }
@@ -173,8 +196,8 @@ class UsuarioController extends Controller
             $usuario->update($usuarioData);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'actualizar',
                 'usuarios',
                 $usuario->id_usuario,
@@ -198,7 +221,7 @@ class UsuarioController extends Controller
         $usuario = Usuario::findOrFail($id);
         
         // No permitir eliminar el propio usuario
-        if (auth()->user()->usuario->id_usuario == $id) {
+        if (Auth::user()->usuario->id_usuario == $id) {
             return back()->with('error', 'No puedes eliminar tu propio usuario.');
         }
         
@@ -212,8 +235,8 @@ class UsuarioController extends Controller
             $persona->update(['id_estatus' => 2]);
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'desactivar',
                 'usuarios',
                 $usuario->id_usuario,
@@ -233,13 +256,13 @@ class UsuarioController extends Controller
     
     public function editPerfil()
     {
-        $usuario = auth()->user()->usuario;
+        $usuario = Auth::user()->usuario;
         return view('usuarios.perfil', compact('usuario'));
     }
     
     public function updatePerfil(Request $request)
     {
-        $usuario = auth()->user()->usuario;
+        $usuario = Auth::user()->usuario;
         
         $request->validate([
             'nombre' => 'required|string|max:100',
@@ -257,7 +280,7 @@ class UsuarioController extends Controller
         try {
             // Verificar contraseña actual si se quiere cambiar
             if ($request->filled('password')) {
-                if (!Hash::check($request->password_actual, auth()->user()->password)) {
+                if (!Hash::check($request->password_actual, Auth::user()->password)) {
                     return back()->withErrors([
                         'password_actual' => 'La contraseña actual no es correcta.'
                     ])->withInput();
@@ -276,7 +299,7 @@ class UsuarioController extends Controller
             ]);
             
             // Actualizar user
-            $user = auth()->user();
+            $user = Auth::user();
             $userData = [
                 'name' => $persona->nombreCompleto(),
                 'email' => $request->email
@@ -286,6 +309,7 @@ class UsuarioController extends Controller
                 $userData['password'] = Hash::make($request->password);
             }
             
+           
             $user->update($userData);
             
             // Actualizar contraseña del usuario si se proporcionó
@@ -296,7 +320,7 @@ class UsuarioController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
+            Movimiento::registrar(
                 $usuario->id_usuario,
                 'actualizar',
                 'usuarios',

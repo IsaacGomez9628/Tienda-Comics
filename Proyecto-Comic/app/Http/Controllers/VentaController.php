@@ -9,7 +9,10 @@ use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Historial_Compra;
 use App\Models\Moneda;
+use App\Models\Movimiento;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class VentaController extends Controller
 {
@@ -52,7 +55,7 @@ class VentaController extends Controller
             $venta = Venta::create([
                 'folio' => Venta::generarFolio(),
                 'id_cliente' => $request->id_cliente,
-                'id_usuario' => auth()->user()->usuario->id_usuario,
+                'id_usuario' => Auth::user()->usuario->id_usuario,
                 'subtotal' => 0, // Se calculará después
                 'descuento' => 0, // Se calculará después
                 'impuesto' => 0, // Se calculará después
@@ -108,8 +111,8 @@ class VentaController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'crear',
                 'ventas',
                 $venta->id_venta,
@@ -181,8 +184,8 @@ class VentaController extends Controller
             }
             
             // Registrar movimiento
-            \App\Models\Movimiento::registrar(
-                auth()->user()->usuario->id_usuario,
+            Movimiento::registrar(
+                Auth::user()->usuario->id_usuario,
                 'cancelar',
                 'ventas',
                 $venta->id_venta,
